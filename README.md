@@ -1,0 +1,1 @@
+# terraform-aws-inspector2-report
