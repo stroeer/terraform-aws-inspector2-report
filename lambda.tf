@@ -1,5 +1,5 @@
-data "archive_file" "failover_lambda" {
-  output_path = "${path.module}/dist/failover.zip"
+data "archive_file" "inspector_cve_report" {
+  output_path = "${path.module}/dist/inspector_cve_report.zip"
   source_file = "${path.module}/src/main.py"
   type        = "zip"
 }
@@ -11,14 +11,14 @@ module "lambda" {
   architectures = ["arm64"]
   description            = "Crawl security services to CUDOS athena table."
   ephemeral_storage_size = 512
-  filename               = data.archive_file.failover_lambda.output_path
+  filename               = data.archive_file.inspector_cve_report.output_path
   function_name          = var.function_name
   handler                = "main.lambda_handler"
   memory_size            = 1024
   runtime                = "python3.12"
   publish                = false
   snap_start             = false
-  source_code_hash       = data.archive_file.failover_lambda.output_base64sha256
+  source_code_hash       = data.archive_file.inspector_cve_report.output_base64sha256
   timeout = 600
 
   // logs and metrics
@@ -35,10 +35,6 @@ module "lambda" {
       CRAWLER_NAME = aws_glue_crawler.s3_crawler.name
       REGIONS      = "eu-west-1,eu-central-1,eu-north-1,us-east-1"
     }
-  }
-
-  tags = {
-    key = "value"
   }
 }
 
@@ -83,7 +79,7 @@ data "aws_iam_policy_document" "this" {
 resource "aws_cloudwatch_event_rule" "cron" {
   name                = "cron"
   description         = "Run the lambda every day"
-  schedule_expression = "rate(1 day)"
+  schedule_expression = "cron(0 4 * * ? *)"
 }
 
 resource "aws_cloudwatch_event_target" "cron" {
