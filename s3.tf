@@ -1,6 +1,6 @@
 locals {
   bucket_name = var.bucket_arn != null ? provider::aws::arn_parse(var.bucket_arn)["resource"] : var.bucket_name
-  prefix = "security-services"
+  prefix      = "security-services"
 }
 
 module "destination_bucket" {
@@ -12,12 +12,12 @@ module "destination_bucket" {
   acl           = "private"
   force_destroy = true
 
-  attach_policy = true
-  attach_deny_insecure_transport_policy = true
-  attach_require_latest_tls_policy = true
+  attach_policy                            = true
+  attach_deny_insecure_transport_policy    = true
+  attach_require_latest_tls_policy         = true
   attach_deny_incorrect_encryption_headers = true
-  attach_deny_incorrect_kms_key_sse = true
-  attach_deny_unencrypted_object_uploads = true
+  attach_deny_incorrect_kms_key_sse        = true
+  attach_deny_unencrypted_object_uploads   = true
 
 
   lifecycle_rule = [

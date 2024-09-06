@@ -8,7 +8,7 @@ module "lambda" {
   source  = "moritzzimmer/lambda/aws"
   version = "7.5.0"
 
-  architectures = ["arm64"]
+  architectures          = ["arm64"]
   description            = "Crawl security services to CUDOS athena table."
   ephemeral_storage_size = 512
   filename               = data.archive_file.inspector_cve_report.output_path
@@ -19,13 +19,13 @@ module "lambda" {
   publish                = false
   snap_start             = false
   source_code_hash       = data.archive_file.inspector_cve_report.output_base64sha256
-  timeout = 600
+  timeout                = 600
 
   // logs and metrics
   cloudwatch_logs_enabled            = true
   cloudwatch_logs_retention_in_days  = 7
   cloudwatch_lambda_insights_enabled = true
-  layers = ["arn:aws:lambda:${data.aws_region.current.id}:580247275435:layer:LambdaInsightsExtension-Arm64:5"]
+  layers                             = ["arn:aws:lambda:${data.aws_region.current.id}:580247275435:layer:LambdaInsightsExtension-Arm64:5"]
 
   environment = {
     variables = {
@@ -50,27 +50,27 @@ resource "aws_iam_policy" "this" {
 
 data "aws_iam_policy_document" "this" {
   statement {
-    sid = "Organizations"
-    actions = ["organizations:DescribeOrganization", "organizations:List*"]
+    sid       = "Organizations"
+    actions   = ["organizations:DescribeOrganization", "organizations:List*"]
     resources = ["*"]
   }
 
   statement {
-    sid = "StartCrawlerForResults"
-    actions = ["glue:StartCrawler",]
+    sid     = "StartCrawlerForResults"
+    actions = ["glue:StartCrawler", ]
 
     resources = [aws_glue_crawler.s3_crawler.arn]
   }
 
   statement {
-    sid = "WriteResults"
-    actions = ["s3:PutObject"]
+    sid       = "WriteResults"
+    actions   = ["s3:PutObject"]
     resources = ["arn:aws:s3:::${local.bucket_name}/*", "arn:aws:s3:::${local.bucket_name}"]
   }
 
   statement {
-    sid = "AssumeRole"
-    actions = ["sts:AssumeRole"]
+    sid       = "AssumeRole"
+    actions   = ["sts:AssumeRole"]
     resources = ["arn:aws:iam::*:role/${var.role_name}"]
   }
 }
