@@ -9,7 +9,7 @@ resource "aws_glue_crawler" "s3_crawler" {
 
   schema_change_policy {
     update_behavior = "LOG"
-    delete_behavior = "LOG"
+    delete_behavior = "DELETE_FROM_DATABASE"
   }
   recrawl_policy {
     recrawl_behavior = "CRAWL_EVERYTHING"
