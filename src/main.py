@@ -162,20 +162,19 @@ def flatten_data(y):
     out = {}
 
     def flatten(x, name=''):
-        if type(x) is dict:
+        if isinstance(x, dict):
             for a in x:
-                flatten(x[a], name + a + '_')
-        elif type(x) is list:
-            i = 0
-            for a in x:
+                flatten(x[a], name + a.lower() + '_')
+        elif isinstance(x, list):
+            for i, a in enumerate(x):
                 flatten(a, name + str(i) + '_')
-                i += 1
         else:
-            out[name[:-1]] = x
+            key = name[:-1].lower()
+            if key not in out:  # Prevent duplicate keys
+                out[key] = x
 
     flatten(y)
     return out
-
 
 def read_inspector(account_id, f_name):
     session = assume_role(account_id)
